@@ -2,10 +2,10 @@ import random
 import time
 
 GENE_SIZE = 50
-POPULATION_SIZE = 26
-GENERATIONS = 5000
-CROSSOVER_PROBABILITY = 0.7
-MUTATION_PROBABILITY = 0.05
+POPULATION_SIZE = 50
+GENERATIONS = 50
+CROSSOVER_PROBABILITY = 0.9
+MUTATION_PROBABILITY = 0.02
 
 
 def initial_population_setup():
@@ -73,17 +73,7 @@ def crossover(population):
     return offspring
 
 
-def mutation(child):
-    for i in range(GENE_SIZE):
-        mutation_chance = random.random()
-        if mutation_chance <= MUTATION_PROBABILITY:
-            if child[i] == 0:
-                child[i] = 1
-            else:
-                child[i] = 0
-    return child
-
-def mutation2(population):
+def mutation(population):
     for i in range(POPULATION_SIZE):
         for j in range(GENE_SIZE):
             mutation_chance = random.random()
@@ -106,19 +96,23 @@ print(initial_fitness_stats[0] / POPULATION_SIZE)
 print("Initial highest fitness:")
 print(initial_fitness_stats[1])
 
+offspring = population
+
 for i in range(GENERATIONS):
-    offspring = shuffle(population)
+    offspring = shuffle(offspring)
 
     offspring = tournament_selection(offspring)
 
     offspring = crossover(offspring)
 
-    offspring = mutation2(offspring)
+    offspring = mutation(offspring)
 
     offspring = calculate_fitness(offspring)
 
     fitness_stats = calculate_total_and_highest_fitness(offspring)
 
+    print("Total fitness:")
+    print(fitness_stats[0])
     print("Average fitness:")
     print(fitness_stats[0] / POPULATION_SIZE)
     print("Highest fitness:")
