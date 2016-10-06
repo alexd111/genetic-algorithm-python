@@ -1,10 +1,10 @@
 import random
 import time
 
-GENE_SIZE = 100
-POPULATION_SIZE = 50
-GENERATIONS = 500
-CROSSOVER_PROBABILITY = 0.6
+GENE_SIZE = 50
+POPULATION_SIZE = 26
+GENERATIONS = 5000
+CROSSOVER_PROBABILITY = 0.7
 MUTATION_PROBABILITY = 0.05
 
 
@@ -23,7 +23,7 @@ def calculate_fitness(population):
     for i in range(POPULATION_SIZE):
         population[i][1] = 0
         for j in range(GENE_SIZE):
-            if population[i][0][j] is 1:
+            if population[i][0][j] == 1:
                 population[i][1] += 1
     return population
 
@@ -38,32 +38,39 @@ def calculate_total_and_highest_fitness(population):
     return [total, highest]
 
 
+def shuffle(population):
+    population = random.sample(population, len(population))
+    return population
+
+
 def tournament_selection(population):
     offspring = []
     for i in range(POPULATION_SIZE):
         parent1 = random.randint(0, POPULATION_SIZE - 1)
         parent2 = random.randint(0, POPULATION_SIZE - 1)
         if population[parent1][1] >= population[parent2][1]:
-            child = crossover(population[parent1][0], population[parent2][0])
-            child = mutation(child)
-            offspring.append([child, 0])
-            # offspring.append(population[parent1])
+            offspring.append(population[parent1])
         else:
-            child = crossover(population[parent2][0], population[parent1][0])
-            child = mutation(child)
-            offspring.append([child, 0])
-            # offspring.append(population[parent2])
+            offspring.append(population[parent2])
     return offspring
 
 
-def crossover(first_parent, second_parent):
+def crossover(population):
+    offspring = []
     probability = random.random()
-    if probability >= CROSSOVER_PROBABILITY:
-        return first_parent
-    else:
-        crossover_point = random.randint(0, 9)
-        new_child = first_parent[:crossover_point] + second_parent[crossover_point:]
-        return new_child
+    for i in range(0, POPULATION_SIZE, 2):
+        first_parent = population[i][0]
+        second_parent = population[i + 1][0]
+        if probability >= CROSSOVER_PROBABILITY:
+            offspring.append([first_parent, 0])
+            offspring.append([second_parent, 0])
+        else:
+            crossover_point = random.randint(0, 9)
+            first_child = first_parent[:crossover_point] + second_parent[crossover_point:]
+            second_child = first_parent[crossover_point:] + second_parent[:crossover_point]
+            offspring.append([first_child, 0])
+            offspring.append([second_child, 0])
+    return offspring
 
 
 def mutation(child):
@@ -75,6 +82,17 @@ def mutation(child):
             else:
                 child[i] = 0
     return child
+
+def mutation2(population):
+    for i in range(POPULATION_SIZE):
+        for j in range(GENE_SIZE):
+            mutation_chance = random.random()
+            if mutation_chance <= MUTATION_PROBABILITY:
+                if population[i][0][j] == 0:
+                    population[i][0][j] = 1
+                else:
+                    population[i][0][j] = 0
+    return population
 
 start = time.clock()
 
@@ -89,7 +107,13 @@ print("Initial highest fitness:")
 print(initial_fitness_stats[1])
 
 for i in range(GENERATIONS):
-    offspring = tournament_selection(population)
+    offspring = shuffle(population)
+
+    offspring = tournament_selection(offspring)
+
+    offspring = crossover(offspring)
+
+    offspring = mutation2(offspring)
 
     offspring = calculate_fitness(offspring)
 
