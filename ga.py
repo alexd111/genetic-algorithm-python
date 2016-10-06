@@ -1,5 +1,7 @@
 import random
 import time
+import json
+import os
 
 GENE_SIZE = 50
 POPULATION_SIZE = 50
@@ -86,6 +88,8 @@ def mutation(population):
 
 start = time.clock()
 
+json_list = []
+
 population = initial_population_setup()
 
 population = calculate_fitness(population)
@@ -114,11 +118,21 @@ for i in range(GENERATIONS):
     print("Total fitness:")
     print(fitness_stats[0])
     print("Average fitness:")
-    print(fitness_stats[0] / POPULATION_SIZE)
+    average_fitness = fitness_stats[0] / POPULATION_SIZE
+    print(average_fitness)
     print("Highest fitness:")
     print(fitness_stats[1])
 
+    json_list.append([fitness_stats[0], average_fitness, fitness_stats[1]])
+
 stop = time.clock()
+
+if os.path.isfile('results.json'):
+    os.remove('results.json')
+
+file = open('results.json', 'w')
+
+file.write(json.dumps(json_list))
 
 print("Number of milliseconds to execute:")
 print((stop - start) * 1000)
