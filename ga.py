@@ -86,7 +86,17 @@ def mutation(population):
                     population[i][0][j] = 0
     return population
 
+
+def read_file_in():
+    lines = [line.rstrip('\n') for line in open('data1.txt')]
+    rules =[]
+    for i in range(int(len(lines) / 2)):
+        rules.append(lines[i].split(" "))
+    print(rules)
+
 start = time.clock()
+
+read_file_in()
 
 json_list = []
 
@@ -115,13 +125,13 @@ for i in range(GENERATIONS):
 
     fitness_stats = calculate_total_and_highest_fitness(offspring)
 
-    print("Total fitness:")
-    print(fitness_stats[0])
-    print("Average fitness:")
+    # print("Total fitness:")
+    # print(fitness_stats[0])
+    # print("Average fitness:")
     average_fitness = fitness_stats[0] / POPULATION_SIZE
-    print(average_fitness)
-    print("Highest fitness:")
-    print(fitness_stats[1])
+    # print(average_fitness)
+    # print("Highest fitness:")
+    # print(fitness_stats[1])
 
     json_list.append([fitness_stats[0], average_fitness, fitness_stats[1]])
 
