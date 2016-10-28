@@ -3,7 +3,7 @@ import time
 import json
 import os
 
-GENE_SIZE = 50
+GENE_SIZE = 60
 POPULATION_SIZE = 50
 GENERATIONS = 50
 CROSSOVER_PROBABILITY = 0.9
@@ -27,6 +27,19 @@ def calculate_fitness(population):
         for j in range(GENE_SIZE):
             if population[i][0][j] == 1:
                 population[i][1] += 1
+
+    for key, value in input_data.items():
+        for i in range(POPULATION_SIZE):
+            chunks = [population[i][0][x:x + 6] for x in range(0, len(population[i][0]), 6)]
+            for j in range(len(chunks)):
+                condition = list(map(str, chunks[j][:5]))
+                condition = ''.join(condition)
+                action = chunks[j][-1]
+                if key == condition:
+                    print(key)
+                    print(condition)
+                    if value == action:
+                        print("MATCH")
     return population
 
 
@@ -89,14 +102,14 @@ def mutation(population):
 
 def read_file_in():
     lines = [line.rstrip('\n') for line in open('data1.txt')]
-    rules =[]
-    for i in range(int(len(lines) / 2)):
-        rules.append(lines[i].split(" "))
-    print(rules)
+    data_dict = {}
+    for i in range(int(len(lines))):
+        data_dict[lines[i].split(" ")[0]] = lines[i].split(" ")[1]
+    return data_dict
 
 start = time.clock()
 
-read_file_in()
+input_data = read_file_in()
 
 json_list = []
 
