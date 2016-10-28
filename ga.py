@@ -5,9 +5,9 @@ import os
 
 GENE_SIZE = 60
 POPULATION_SIZE = 50
-GENERATIONS = 50
-CROSSOVER_PROBABILITY = 0.9
-MUTATION_PROBABILITY = 0.02
+GENERATIONS = 200
+CROSSOVER_PROBABILITY = 0.8
+MUTATION_PROBABILITY = 0.000
 
 
 def initial_population_setup():
@@ -22,24 +22,24 @@ def initial_population_setup():
 
 
 def calculate_fitness(population):
-    for i in range(POPULATION_SIZE):
-        population[i][1] = 0
-        for j in range(GENE_SIZE):
-            if population[i][0][j] == 1:
-                population[i][1] += 1
+    # for i in range(POPULATION_SIZE):
+    #     population[i][1] = 0
+    #     for j in range(GENE_SIZE):
+    #         if population[i][0][j] == 1:
+    #             population[i][1] += 1
 
     for key, value in input_data.items():
         for i in range(POPULATION_SIZE):
+            population[i][1] = 0
             chunks = [population[i][0][x:x + 6] for x in range(0, len(population[i][0]), 6)]
             for j in range(len(chunks)):
                 condition = list(map(str, chunks[j][:5]))
                 condition = ''.join(condition)
                 action = chunks[j][-1]
                 if key == condition:
-                    print(key)
-                    print(condition)
-                    if value == action:
-                        print("MATCH")
+                    if value == str(action):
+                        population[i][1] += 1
+
     return population
 
 
@@ -139,7 +139,7 @@ for i in range(GENERATIONS):
     fitness_stats = calculate_total_and_highest_fitness(offspring)
 
     # print("Total fitness:")
-    # print(fitness_stats[0])
+    print(fitness_stats[0])
     # print("Average fitness:")
     average_fitness = fitness_stats[0] / POPULATION_SIZE
     # print(average_fitness)
