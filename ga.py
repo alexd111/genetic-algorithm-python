@@ -5,9 +5,9 @@ import os
 
 GENE_SIZE = 60
 POPULATION_SIZE = 50
-GENERATIONS = 200
-CROSSOVER_PROBABILITY = 0.8
-MUTATION_PROBABILITY = 0.000
+GENERATIONS = 50
+CROSSOVER_PROBABILITY = 0.5
+MUTATION_PROBABILITY = 0.001
 
 
 def initial_population_setup():
@@ -139,7 +139,7 @@ for i in range(GENERATIONS):
     fitness_stats = calculate_total_and_highest_fitness(offspring)
 
     # print("Total fitness:")
-    print(fitness_stats[0])
+    # print(fitness_stats[0])
     # print("Average fitness:")
     average_fitness = fitness_stats[0] / POPULATION_SIZE
     # print(average_fitness)
