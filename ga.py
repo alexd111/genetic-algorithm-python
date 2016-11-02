@@ -3,11 +3,12 @@ import time
 import json
 import os
 
-GENE_SIZE = 60
+GENE_SIZE = 70
 POPULATION_SIZE = 50
 GENERATIONS = 50
 CROSSOVER_PROBABILITY = 0.5
-MUTATION_PROBABILITY = 0.001
+MUTATION_PROBABILITY = 0.002
+GENERALIZATION_PROBABILITY = 0.002
 
 
 def initial_population_setup():
@@ -22,24 +23,32 @@ def initial_population_setup():
 
 
 def calculate_fitness(population):
-    # for i in range(POPULATION_SIZE):
-    #     population[i][1] = 0
-    #     for j in range(GENE_SIZE):
-    #         if population[i][0][j] == 1:
-    #             population[i][1] += 1
-
+    population = reset_population_fitness(population)
     for key, value in input_data.items():
         for i in range(POPULATION_SIZE):
-            population[i][1] = 0
-            chunks = [population[i][0][x:x + 6] for x in range(0, len(population[i][0]), 6)]
+
+            chunks = [population[i][0][x:x + 7] for x in range(0, len(population[i][0]), 7)]
             for j in range(len(chunks)):
-                condition = list(map(str, chunks[j][:5]))
+                match = 0
+                condition = list(map(str, chunks[j][:6]))
                 condition = ''.join(condition)
                 action = chunks[j][-1]
-                if key == condition:
+                for item in key:
+                    for char in condition:
+                        if item == char or char == "2":
+                            match += 1
+
+                # if key == condition:
+                if match == 6:
                     if value == str(action):
                         population[i][1] += 1
 
+    return population
+
+
+def reset_population_fitness(population):
+    for i in range(POPULATION_SIZE):
+        population[i][1] = 0
     return population
 
 
@@ -80,11 +89,18 @@ def crossover(population):
             offspring.append([first_parent, 0])
             offspring.append([second_parent, 0])
         else:
-            crossover_point = random.randint(0, 9)
+            crossover_point = random.randint(0, GENE_SIZE - 1)
             first_child = first_parent[:crossover_point] + second_parent[crossover_point:]
             second_child = first_parent[crossover_point:] + second_parent[:crossover_point]
-            offspring.append([first_child, 0])
-            offspring.append([second_child, 0])
+            first_action_list = first_child[::7]
+            second_action_list = second_child[::7]
+            if (2 not in first_action_list) or (2 not in second_action_list):
+                offspring.append([first_child, 0])
+                offspring.append([second_child, 0])
+            else:
+                offspring.append([first_parent, 0])
+                offspring.append([second_parent, 0])
+
     return offspring
 
 
@@ -95,13 +111,19 @@ def mutation(population):
             if mutation_chance <= MUTATION_PROBABILITY:
                 if population[i][0][j] == 0:
                     population[i][0][j] = 1
-                else:
+                elif population[i][0][j] == 1:
                     population[i][0][j] = 0
+                else:
+                    population[i][0][j] = random.randint(0, 1)
+            generalization_chance = random.random()
+            if generalization_chance <= GENERALIZATION_PROBABILITY:
+                if not((j + 1) % 7 == 0):
+                    population[i][0][j] = 2
     return population
 
 
 def read_file_in():
-    lines = [line.rstrip('\n') for line in open('data1.txt')]
+    lines = [line.rstrip('\n') for line in open('data2.txt')]
     data_dict = {}
     for i in range(int(len(lines))):
         data_dict[lines[i].split(" ")[0]] = lines[i].split(" ")[1]
@@ -125,28 +147,31 @@ print(initial_fitness_stats[1])
 
 offspring = population
 
-for i in range(GENERATIONS):
-    offspring = shuffle(offspring)
+for b in range(10):
+    print("Iteration: " + str(b))
+    for i in range(GENERATIONS):
+        print("Gen: " + str(i))
+        offspring = shuffle(offspring)
 
-    offspring = tournament_selection(offspring)
+        offspring = tournament_selection(offspring)
 
-    offspring = crossover(offspring)
+        offspring = crossover(offspring)
 
-    offspring = mutation(offspring)
+        offspring = mutation(offspring)
 
-    offspring = calculate_fitness(offspring)
+        offspring = calculate_fitness(offspring)
 
-    fitness_stats = calculate_total_and_highest_fitness(offspring)
+        fitness_stats = calculate_total_and_highest_fitness(offspring)
 
-    # print("Total fitness:")
-    # print(fitness_stats[0])
-    # print("Average fitness:")
-    average_fitness = fitness_stats[0] / POPULATION_SIZE
-    # print(average_fitness)
-    # print("Highest fitness:")
-    # print(fitness_stats[1])
+        # print("Total fitness:")
+        # print(fitness_stats[0])
+        # print("Average fitness:")
+        average_fitness = fitness_stats[0] / POPULATION_SIZE
+        # print(average_fitness)
+        # print("Highest fitness:")
+        # print(fitness_stats[1])
 
-    json_list.append([fitness_stats[0], average_fitness, fitness_stats[1]])
+        json_list.append([fitness_stats[0], average_fitness, fitness_stats[1]])
 
 stop = time.clock()
 
