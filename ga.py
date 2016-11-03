@@ -7,7 +7,7 @@ GENE_SIZE = 70
 POPULATION_SIZE = 50
 GENERATIONS = 50
 CROSSOVER_PROBABILITY = 0.5
-MUTATION_PROBABILITY = 0.002
+MUTATION_PROBABILITY = 0.00
 GENERALIZATION_PROBABILITY = 0.002
 
 
@@ -147,31 +147,32 @@ print(initial_fitness_stats[1])
 
 offspring = population
 
-for b in range(10):
-    print("Iteration: " + str(b))
-    for i in range(GENERATIONS):
-        print("Gen: " + str(i))
-        offspring = shuffle(offspring)
+# for b in range(10):
+#     json_list.append([])
+# print("Iteration: " + str(b))
+for i in range(GENERATIONS):
+    print("Gen: " + str(i))
+    offspring = shuffle(offspring)
 
-        offspring = tournament_selection(offspring)
+    offspring = tournament_selection(offspring)
 
-        offspring = crossover(offspring)
+    offspring = crossover(offspring)
 
-        offspring = mutation(offspring)
+    offspring = mutation(offspring)
 
-        offspring = calculate_fitness(offspring)
+    offspring = calculate_fitness(offspring)
 
-        fitness_stats = calculate_total_and_highest_fitness(offspring)
+    fitness_stats = calculate_total_and_highest_fitness(offspring)
 
-        # print("Total fitness:")
-        # print(fitness_stats[0])
-        # print("Average fitness:")
-        average_fitness = fitness_stats[0] / POPULATION_SIZE
-        # print(average_fitness)
-        # print("Highest fitness:")
-        # print(fitness_stats[1])
+    # print("Total fitness:")
+    # print(fitness_stats[0])
+    # print("Average fitness:")
+    average_fitness = fitness_stats[0] / POPULATION_SIZE
+    # print(average_fitness)
+    # print("Highest fitness:")
+    # print(fitness_stats[1])
 
-        json_list.append([fitness_stats[0], average_fitness, fitness_stats[1]])
+    json_list.append([fitness_stats[0], average_fitness, fitness_stats[1]])
 
 stop = time.clock()
 
