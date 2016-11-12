@@ -3,12 +3,11 @@ import time
 import json
 import os
 
-GENE_SIZE = 70
+GENE_SIZE = 64
 POPULATION_SIZE = 50
-GENERATIONS = 50
+GENERATIONS = 100
 CROSSOVER_PROBABILITY = 0.5
-MUTATION_PROBABILITY = 0.00
-GENERALIZATION_PROBABILITY = 0.002
+MUTATION_PROBABILITY = 0.002
 
 
 def initial_population_setup():
@@ -33,12 +32,9 @@ def calculate_fitness(population):
                 condition = list(map(str, chunks[j][:6]))
                 condition = ''.join(condition)
                 action = chunks[j][-1]
-                for item in key:
-                    for char in condition:
-                        if item == char or char == "2":
-                            match += 1
-
-                # if key == condition:
+                for k in range(len(key)):
+                    if (key[k] == condition[k]) or (condition[k] == "2"):
+                        match += 1
                 if match == 6:
                     if value == str(action):
                         population[i][1] += 1
@@ -108,17 +104,8 @@ def mutation(population):
     for i in range(POPULATION_SIZE):
         for j in range(GENE_SIZE):
             mutation_chance = random.random()
-            if mutation_chance <= MUTATION_PROBABILITY:
-                if population[i][0][j] == 0:
-                    population[i][0][j] = 1
-                elif population[i][0][j] == 1:
-                    population[i][0][j] = 0
-                else:
-                    population[i][0][j] = random.randint(0, 1)
-            generalization_chance = random.random()
-            if generalization_chance <= GENERALIZATION_PROBABILITY:
-                if not((j + 1) % 7 == 0):
-                    population[i][0][j] = 2
+            if (mutation_chance <= MUTATION_PROBABILITY) and (not((j + 1) % 7 == 0)):
+                population[i][0][j] = random.randint(0, 2)
     return population
 
 
