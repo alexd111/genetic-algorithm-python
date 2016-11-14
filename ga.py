@@ -3,7 +3,7 @@ import time
 import json
 import os
 
-GENE_SIZE = 64
+GENE_SIZE = 70
 POPULATION_SIZE = 50
 GENERATIONS = 100
 CROSSOVER_PROBABILITY = 0.5
