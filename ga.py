@@ -17,7 +17,7 @@ def initial_population_setup():
 
     for i in range(POPULATION_SIZE):
         for j in range(GENE_SIZE):
-            population[i][0][j] = random.randint(0, 1)
+            population[i][0][j] = random.random()
     return population
 
 
@@ -115,10 +115,15 @@ def mutation(population):
 
 
 def read_file_in():
-    lines = [line.rstrip('\n') for line in open('data2.txt')]
+    lines = [line.rstrip('\n') for line in open('data3.txt')]
+    n = 6
+
     data_dict = {}
     for i in range(int(len(lines))):
-        data_dict[lines[i].split(" ")[0]] = lines[i].split(" ")[1]
+        groups = lines[i].split(' ')
+        key = ' '.join(groups[:n])
+        value = ' '.join(groups[n:])
+        data_dict[key] = value
     return data_dict
 
 start = time.clock()
