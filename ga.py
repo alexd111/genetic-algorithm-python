@@ -3,7 +3,7 @@ import time
 import json
 import os
 
-GENE_SIZE = 64
+GENE_SIZE = 70
 POPULATION_SIZE = 50
 GENERATIONS = 100
 CROSSOVER_PROBABILITY = 0.5
@@ -24,21 +24,26 @@ def initial_population_setup():
 def calculate_fitness(population):
     population = reset_population_fitness(population)
     for key, value in input_data.items():
-        for i in range(POPULATION_SIZE):
+        is_match = False
+        while is_match is False:
+            for i in range(POPULATION_SIZE):
 
-            chunks = [population[i][0][x:x + 7] for x in range(0, len(population[i][0]), 7)]
-            for j in range(len(chunks)):
-                match = 0
-                condition = list(map(str, chunks[j][:6]))
-                condition = ''.join(condition)
-                action = chunks[j][-1]
-                for k in range(len(key)):
-                    if (key[k] == condition[k]) or (condition[k] == "2"):
-                        match += 1
-                if match == 6:
-                    if value == str(action):
-                        population[i][1] += 1
+                chunks = [population[i][0][x:x + 7] for x in range(0, len(population[i][0]), 7)]
+                for j in range(len(chunks)):
+                    match = 0
+                    condition = list(map(str, chunks[j][:6]))
+                    condition = ''.join(condition)
 
+                    action = chunks[j][-1]
+                    for k in range(len(key)):
+                        if (key[k] == condition[k]) or (condition[k] == "2"):
+                            match += 1
+                    if match == 6:
+                        if value == str(action):
+                            is_match = True
+                            population[i][1] += 1
+                if i == (POPULATION_SIZE - 1):
+                    is_match = True;
     return population
 
 
