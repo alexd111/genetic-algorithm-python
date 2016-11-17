@@ -5,9 +5,9 @@ import os
 
 GENE_SIZE = 70
 POPULATION_SIZE = 50
-GENERATIONS = 100
+GENERATIONS = 50
 CROSSOVER_PROBABILITY = 0.5
-MUTATION_PROBABILITY = 0.002
+MUTATION_PROBABILITY = 0.005
 
 
 def initial_population_setup():
@@ -17,13 +17,17 @@ def initial_population_setup():
 
     for i in range(POPULATION_SIZE):
         for j in range(GENE_SIZE):
-            population[i][0][j] = random.random()
+            random_float = random.random()
+            random_float = round(random_float, 6)
+            population[i][0][j] = random_float
+
     return population
 
 
 def calculate_fitness(population):
     population = reset_population_fitness(population)
     for key, value in input_data.items():
+        key_list = key.split(" ")
         is_match = False
         while is_match is False:
             for i in range(POPULATION_SIZE):
@@ -32,13 +36,17 @@ def calculate_fitness(population):
                 for j in range(len(chunks)):
                     match = 0
                     condition = list(map(str, chunks[j][:6]))
-                    condition = ''.join(condition)
 
                     action = chunks[j][-1]
-                    for k in range(len(key)):
-                        if (key[k] == condition[k]) or (condition[k] == "2"):
+                    for k in range(len(key_list)):
+                        key_list_float = float(key_list[k])
+                        condition_float = float(condition[k])
+                        upper_bound = condition_float + 0.1
+                        lower_bound = condition_float - 0.1
+                        if (lower_bound < key_list_float < upper_bound) or (condition[k] == 2.0):
                             match += 1
                     if match == 6:
+                        action = round(action)
                         if value == str(action):
                             is_match = True
                             population[i][1] += 1
@@ -110,7 +118,13 @@ def mutation(population):
         for j in range(GENE_SIZE):
             mutation_chance = random.random()
             if (mutation_chance <= MUTATION_PROBABILITY) and (not((j + 1) % 7 == 0)):
-                population[i][0][j] = random.randint(0, 2)
+                generalisation_chance = random.randint(0, 1)
+                if generalisation_chance == 0:
+                    random_float = random.random()
+                    random_float = round(random_float, 6)
+                    population[i][0][j] = random_float
+                else:
+                    population[i][0][j] = 2.0
     return population
 
 
@@ -159,6 +173,8 @@ for i in range(GENERATIONS):
 
     offspring = calculate_fitness(offspring)
 
+    print(len(offspring))
+    print(offspring)
     fitness_stats = calculate_total_and_highest_fitness(offspring)
 
     # print("Total fitness:")
