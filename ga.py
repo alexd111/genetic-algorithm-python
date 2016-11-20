@@ -5,9 +5,9 @@ import os
 
 GENE_SIZE = 70
 POPULATION_SIZE = 50
-GENERATIONS = 100
-CROSSOVER_PROBABILITY = 0.5
-MUTATION_PROBABILITY = 0.002
+GENERATIONS = 200
+CROSSOVER_PROBABILITY = 0.7
+MUTATION_PROBABILITY = 0.001
 
 
 def initial_population_setup():
@@ -38,6 +38,7 @@ def calculate_fitness(population):
                 if match == 6:
                     if value == str(action):
                         population[i][1] += 1
+                        break
 
     return population
 
